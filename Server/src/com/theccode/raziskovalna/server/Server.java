@@ -5,6 +5,8 @@ import java.net.Socket;
 
 public class Server {
     private int port;
+    private boolean run = false;
+    private ServerSocket serverSocket;
 
     public Server(int port) {
         this.port = port;
@@ -16,18 +18,16 @@ public class Server {
 
     public void start() {
         try {
-            ServerSocket serverSocket = new ServerSocket(port);
-            Socket clientSocket1 = serverSocket.accept();
-            Socket clientSocket2 = serverSocket.accept();
+            run = true;
+            serverSocket = new ServerSocket(port);
 
-            ConnectionHandler connectionHandler1 = new ConnectionHandler(clientSocket1);
-            new Thread(connectionHandler1).start();
-
-            ConnectionHandler connectionHandler2 = new ConnectionHandler(clientSocket2);
-            new Thread(connectionHandler2).start();
-
+            while (run) {
+                Socket socket = serverSocket.accept();
+                ConnectionHandler connectionHandler = new ConnectionHandler(socket);
+                new Thread(connectionHandler).start();
+            }
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 }
