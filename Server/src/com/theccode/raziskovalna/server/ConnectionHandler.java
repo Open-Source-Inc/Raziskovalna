@@ -15,12 +15,14 @@ public class ConnectionHandler implements Runnable{
     public void run() {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
+            while (true) {
+                String inputLine = in.readLine();
+                if (inputLine == null) break;
+
                 System.out.println(inputLine);
             }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 }
