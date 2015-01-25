@@ -5,22 +5,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Server {
+public class Server implements Runnable {
     private int port;
     private boolean run = false;
     private ServerSocket serverSocket;
     private ArrayList<ConnectionHandler> connectionHandlers;
 
-    public Server(int port) {
-        this.port = port;
-        connectionHandlers = new ArrayList<ConnectionHandler>();
-    }
-
-    public Server() {
-        throw new IllegalArgumentException("Wrong initializer. Use Server(int port);");
-    }
-
-    public void start() {
+    public void run() {
         try {
             run = true;
             serverSocket = new ServerSocket(port);
@@ -29,13 +20,19 @@ public class Server {
                 Socket socket = serverSocket.accept();
                 ConnectionHandler connectionHandler = new ConnectionHandler(socket);
                 connectionHandlers.add(connectionHandler);
-
-                System.out.println(read("mami"));
-                write("mami", "oci");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Server(int port) {
+        this.port = port;
+        connectionHandlers = new ArrayList<ConnectionHandler>();
+    }
+
+    public Server() {
+        throw new IllegalArgumentException("Wrong initializer. Use Server(int port);");
     }
 
     public String read(String id) {

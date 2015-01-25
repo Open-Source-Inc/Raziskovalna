@@ -1,15 +1,12 @@
 package com.theccode.raziskovalna.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class ConnectionHandler implements Runnable{
     private Socket socket;
     private Thread thread;
-    private PrintWriter out;
+    private PrintStream out;
     private String id;
     private String lastMessage = "";
     private boolean running = true;
@@ -21,7 +18,7 @@ public class ConnectionHandler implements Runnable{
         thread.start();
 
         try {
-            out = new PrintWriter(socket.getOutputStream(), true);
+            out = new PrintStream(socket.getOutputStream(), true, "ASCII");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -30,14 +27,12 @@ public class ConnectionHandler implements Runnable{
     @Override
     public void run() {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "ASCII"));
             while (running) {
                 String inputLine = in.readLine();
                 if (inputLine == null) break;
                 if (id.equals("")) id = inputLine;
                 else lastMessage = inputLine;
-
-                System.out.println(inputLine);
             }
         } catch (Exception e) {
             e.printStackTrace();
