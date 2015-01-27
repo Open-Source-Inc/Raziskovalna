@@ -1,6 +1,5 @@
 package com.theccode.raziskovalna.server;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class Server implements Runnable {
                 return connectionHandlers.get(i).read();
         }
 
-        return "";
+        return null;
     }
 
     public void write(String id, String data) {
@@ -56,9 +55,39 @@ public class Server implements Runnable {
     private void clean() {
         for (int i = 0; i < connectionHandlers.size(); i++) {
             if (!connectionHandlers.get(i).isAlive()) {
+                connectionHandlers.set(i, null);
                 connectionHandlers.remove(i);
                 i--;
             }
         }
+    }
+
+    public synchronized int size() {
+        return connectionHandlers.size();
+    }
+
+    public String getData(String id, String request) {
+        write(id, request);
+        while(exists(id)) {
+            if (changed(id))
+                return read(id);
+        }
+        return null;
+    }
+
+    private boolean changed(String id) {
+        for (int i = 0; i < connectionHandlers.size(); i++)
+            if (connectionHandlers.get(i).getId().equals(id))
+                return connectionHandlers.get(i).getChanged();
+        return false;
+    }
+
+    private boolean exists(String id) {
+        clean();
+        for (int i = 0; i < connectionHandlers.size(); i++) {
+            if (connectionHandlers.get(i).getId().equals(id))
+                return true;
+        }
+        return false;
     }
 }

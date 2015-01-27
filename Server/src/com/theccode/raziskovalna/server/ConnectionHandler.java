@@ -2,6 +2,7 @@ package com.theccode.raziskovalna.server;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ConnectionHandler implements Runnable{
     private Socket socket;
@@ -10,6 +11,9 @@ public class ConnectionHandler implements Runnable{
     private String id;
     private String lastMessage = "";
     private boolean running = true;
+    private boolean write = false;
+    private long writeTime = 0;
+    private boolean changed = false;
 
     public ConnectionHandler(Socket socket) {
         id = "";
@@ -29,14 +33,27 @@ public class ConnectionHandler implements Runnable{
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "ASCII"));
             while (running) {
-                String inputLine = in.readLine();
-                if (inputLine == null) break;
-                if (id.equals("")) id = inputLine;
-                else lastMessage = inputLine;
+                if (in.ready()) {
+                    String inputLine = in.readLine();
+                    if (inputLine == null) break;
+                    if (id.equals("")) id = inputLine;
+                    else lastMessage = inputLine;
+                    write = false;
+                    changed = true;
+                } else if (write && System.currentTimeMillis() - writeTime > 10000) {
+                    socket.close();
+                    break;
+                }
+
+                Thread.sleep(1000);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public synchronized void stop() {
+        running = false;
     }
 
     public synchronized boolean isAlive() {
@@ -44,7 +61,16 @@ public class ConnectionHandler implements Runnable{
     }
 
     public synchronized void write(String data) {
+        if (!write) {
+            write = true;
+            writeTime = System.currentTimeMillis();
+        }
+        changed = false;
         out.println(data);
+    }
+
+    public synchronized boolean getChanged() {
+        return changed;
     }
 
     public synchronized String read() {
