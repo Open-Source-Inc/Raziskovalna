@@ -13,7 +13,11 @@ public class Main {
             int color = (int)(Math.random() * 3);
             float temp = (float)(Math.random() * 30);
 
-            server.write("rabbit1", color + "15" + df.format(temp) + " &C");
+            //server.write("rabbit1", color + "15" + df.format(temp) + " &C");
+            String rabbit1Data = server.getData("rabbit1", "temp");
+            if (rabbit1Data != null)
+                server.write("rabbit1", color + "15" + rabbit1Data + " &C");
+
             try {
                 Thread.sleep(5000);
             } catch (Exception e) {
