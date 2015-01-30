@@ -1,50 +1,44 @@
 package com.theccode.raziskovalna.server;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.Socket;
-import java.net.SocketException;
 
-public class ConnectionHandler implements Runnable{
+public class ConnectionHandler {
     private Socket socket;
-    private Thread thread;
     private PrintStream out;
-    private String id;
-    private String lastMessage = "";
-    private boolean running = true;
-    private boolean write = false;
-    private long writeTime = 0;
-    private boolean changed = false;
+    private BufferedReader in;
+
+    public boolean connected = true;
+    public String id;
+
 
     public ConnectionHandler(Socket socket) {
-        id = "";
-        this.socket = socket;
-        thread = new Thread(this);
-        thread.start();
-
         try {
-            out = new PrintStream(socket.getOutputStream(), true, "ASCII");
-        } catch (Exception e) {
+            this.socket = socket;
+            out = new PrintStream(this.socket.getOutputStream(), true, "ASCII");
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "ASCII"));
+
+            id = in.readLine();
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void run() {
+    public void write(String data) {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "ASCII"));
-            while (running) {
+            out.println(data);
+            long time = System.currentTimeMillis();
+            while (true) {
                 if (in.ready()) {
-                    String inputLine = in.readLine();
-                    if (inputLine == null) break;
-                    if (id.equals("")) id = inputLine;
-                    else lastMessage = inputLine;
-                    write = false;
-                    changed = true;
-                } else if (write && System.currentTimeMillis() - writeTime > 10000) {
+                    in.readLine();
+                    return;
+                }else if (System.currentTimeMillis() - time > 10000) {
+                    connected = false;
                     socket.close();
-                    break;
+                    return;
                 }
-
                 Thread.sleep(1000);
             }
         } catch (Exception e) {
@@ -52,32 +46,23 @@ public class ConnectionHandler implements Runnable{
         }
     }
 
-    public synchronized void stop() {
-        running = false;
-    }
-
-    public synchronized boolean isAlive() {
-        return thread.isAlive();
-    }
-
-    public synchronized void write(String data) {
-        if (!write) {
-            write = true;
-            writeTime = System.currentTimeMillis();
+    public String getData(String data) {
+        try {
+            out.println(data);
+            long time = System.currentTimeMillis();
+            while (true) {
+                if (in.ready())
+                    return in.readLine();
+                else if (System.currentTimeMillis() - time > 10000) {
+                    connected = false;
+                    socket.close();
+                    return null;
+                }
+                Thread.sleep(1000);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        changed = false;
-        out.println(data);
-    }
-
-    public synchronized boolean getChanged() {
-        return changed;
-    }
-
-    public synchronized String read() {
-        return lastMessage;
-    }
-
-    public synchronized String getId() {
-        return id;
+        return null;
     }
 }
