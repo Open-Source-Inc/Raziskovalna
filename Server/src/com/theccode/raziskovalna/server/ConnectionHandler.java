@@ -9,9 +9,10 @@ public class ConnectionHandler {
     private Socket socket;
     private PrintStream out;
     private BufferedReader in;
+    private long timeout = 15000;
 
     public boolean connected = true;
-    public String id;
+    public String id = "";
 
 
     public ConnectionHandler(Socket socket) {
@@ -20,7 +21,18 @@ public class ConnectionHandler {
             out = new PrintStream(this.socket.getOutputStream(), true, "ASCII");
             in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "ASCII"));
 
-            id = in.readLine();
+            long start = System.currentTimeMillis();
+            while (true) {
+                if (in.ready()) {
+                    id = in.readLine();
+                    break;
+                } else if (System.currentTimeMillis() - start > timeout) {
+                    connected = false;
+                    socket.close();
+                    break;
+                }
+                Thread.sleep(1000);
+            }
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -34,7 +46,7 @@ public class ConnectionHandler {
                 if (in.ready()) {
                     in.readLine();
                     return;
-                }else if (System.currentTimeMillis() - time > 10000) {
+                } else if (System.currentTimeMillis() - time > timeout) {
                     connected = false;
                     socket.close();
                     return;
@@ -53,7 +65,7 @@ public class ConnectionHandler {
             while (true) {
                 if (in.ready())
                     return in.readLine();
-                else if (System.currentTimeMillis() - time > 10000) {
+                else if (System.currentTimeMillis() - time > timeout) {
                     connected = false;
                     socket.close();
                     return null;
