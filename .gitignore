@@ -6,3 +6,5 @@
 *.map
 *.org
 *.rom
+
+Server/MySQL Connector.jar
