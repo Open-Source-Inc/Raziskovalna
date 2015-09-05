@@ -77,7 +77,7 @@ void wakeup(){
 double readTemperature(){
 
 	temperature = 0;
-	for(i=0; i < 10; i++){
+	for(i=0; i < 1; i++){
 
 		//starts temperature conversion
 		data = 0;
@@ -101,10 +101,10 @@ double readTemperature(){
 
 		temperature =  temperature + temperatureRead - 0.25 + (double)((double)(countPerC - countRemain) / (double)countPerC);
 		//printf("temperature:%f temperatureRead:%f countPerC:%d countRemain:%d\n", temperature, temperatureRead, countPerC, countRemain);
-		wait();
+		//wait();
 	}
 	
-	temperature = temperature/10;
+	temperature = temperature/1;
 
 
 	return temperature;
@@ -319,6 +319,9 @@ void runWithServerProtocol(){
 void main(){
 	initialize();
 	while(1){
-		runWithServerProtocol();
+					temperature2 = readTemperature();
+					sprintf(output, "%f", temperature2);
+					printf("temperature: %s\n", output);
+					renderString("temptesttemp", 2);
 	}
 }
