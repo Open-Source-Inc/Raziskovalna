@@ -319,9 +319,6 @@ void runWithServerProtocol(){
 void main(){
 	initialize();
 	while(1){
-					temperature2 = readTemperature();
-					sprintf(output, "%f", temperature2);
-					printf("temperature: %s\n", output);
-					renderString("temptesttemp", 2);
+		runWithServerProtocol();
 	}
 }
