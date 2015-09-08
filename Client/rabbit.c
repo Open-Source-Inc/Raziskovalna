@@ -319,6 +319,6 @@ void runWithServerProtocol(){
 void main(){
 	initialize();
 	while(1){
-		runWithServerProtocol();
+		//runWithServerProtocol();
 	}
 }
