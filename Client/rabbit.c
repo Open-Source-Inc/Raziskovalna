@@ -38,7 +38,7 @@ int digitColors[11];
 
 char data, temp, countPerC, countRemain;
 char output[2048];
-int i, j, address, color, waitInt, roundI, roundJ;
+int i, j, address, color, waitInt, waitCount, roundI, roundJ;
 unsigned char readArray[2];
 double temperature, temperatureRead, temperature2, temperatureResult;
 char colorString[1];
@@ -49,6 +49,12 @@ int intensity, co2;
 
 void wait(){
 	for(waitInt = 0; waitInt < 20000; waitInt++){}
+}
+
+void waitx(int times){
+	for(waitCount = 0; waitCount < times; waitCount++){
+		for(waitInt = 0; waitInt < 20000; waitInt++){}
+	}
 }
 
 void runTest(){
@@ -360,69 +366,17 @@ void main(){
 	initialize();
 	while(1){
 		//runWithServerProtocol();
+		
 		co2 = readCo2();
 		printf("co2: %d\n", co2);
 		snprintf(toWriteString, sizeof(toWriteString), "%d ppm", co2);
 		renderString(toWriteString, 0);
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
+		waitx(50);
+
 		temperature2 = readTemperature();
 		printf("temp: %f\n", temperature2);
 		snprintf(toWriteString, sizeof(toWriteString), "%.1f °C", temperature2);
-		renderString(toWriteString, 0);
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
-		wait();
+		renderString(toWriteString, 2);
+		waitx(50);
 	}
 }
