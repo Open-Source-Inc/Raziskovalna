@@ -40,7 +40,7 @@ char data, temp, countPerC, countRemain;
 char output[2048];
 int i, j, address, color, waitInt, roundI, roundJ;
 unsigned char readArray[2];
-double temperature, temperatureRead, temperature2;
+double temperature, temperatureRead, temperature2, temperatureResult;
 char colorString[1];
 char intensityString[2];
 char string[11];
@@ -110,9 +110,43 @@ double readTemperature(){
 	}
 	
 	temperature = temperature/1;
-
-
 	return temperature;
+}
+
+//sample method that prints value from co2 sensor
+int readCo2(){
+	while(1){
+		i2c_start_tx();
+		i2c_write_char(CO2_WR_ADDRESS);
+		i2c_write_char(CO2_FUNCTION_CODE);
+		i2c_write_char(0x13);
+		i2c_write_char(0x8B);
+		i2c_write_char(0);
+		i2c_write_char(1);
+		
+		i2c_stop_tx();
+		i2c_start_tx();
+
+		i2c_write_char(CO2_RD_ADDRESS);
+	
+		i2c_read_char(&co2Data0);
+		i2c_send_ack();
+		i2c_read_char(&co2Data1);
+		i2c_send_ack();
+		i2c_read_char(&co2Data2);
+		i2c_send_ack();
+		i2c_read_char(&co2Data3);
+		i2c_send_nak();
+		i2c_stop_tx();
+		if(co2Data0 != 0){
+			break;
+		}
+	}
+	/*printf("%d, %d, %d, %d: ", co2Data0, co2Data1, co2Data2, co2Data3);
+	result = 256*co2Data2 + co2Data3;
+	printf("%d\n", result);
+	return result;*/
+	return 256*co2Data2 + co2Data3;
 }
 
 //0=green, 1=orange, 2=red
@@ -321,39 +355,15 @@ void runWithServerProtocol(){
 	}
 }
 
-int readCo2(){
-	i2c_startw_tx();
-	//i2c_wr_wait(CO2_WR_ADDRESS);
-	i2c_write_char(CO2_WR_ADDRESS);
-	i2c_write_char(CO2_FUNCTION_CODE);
-	i2c_write_char(0x13);
-	i2c_write_char(0x8B);
-	i2c_write_char(0);
-	i2c_write_char(1);
-
-	i2c_start_tx();
-	//i2c_wr_wait(CO2_RD_ADDRESS);
-	i2c_write_char(CO2_RD_ADDRESS);
-	i2c_read_char(&co2Data0);
-	i2c_send_ack();
-	i2c_read_char(&co2Data1);
-	i2c_send_ack();
-	i2c_read_char(&co2Data2);
-	i2c_send_ack();
-	i2c_read_char(&co2Data3);
-	i2c_send_nak();
-	i2c_stop_tx();
-	printf("%d, %d, %d, %d\n", co2Data0, co2Data1, co2Data2, co2Data3);
-	return 256 * (int) co2Data2 + (int) co2Data3;
-}
-
 void main(){
 	initialize();
 	while(1){
 		//runWithServerProtocol();
 		co2 = readCo2();
-		printf("%d\n", co2);
+		printf("co2: %d\n", co2);
 		wait();
+		temperature2 = readTemperature();
+		printf("temp: %f\n", temperature2);
 		wait();
 		wait();
 		wait();
