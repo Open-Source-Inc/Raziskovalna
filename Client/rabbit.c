@@ -24,6 +24,11 @@ const char configRegister = 0x4;
 const char intensity1Register = 0x01;
 const char intensity2Register = 0x02;
 
+const char CO2_WR_ADDRESS = 0x2A;
+const char CO2_RD_ADDRESS = 0x2B;
+const char CO2_FUNCTION_CODE = 0x04;
+char co2Data0, co2Data1, co2Data2, co2Data3;
+
 //defaults
 const int defaultIntensity = 15;
 const int defaultColor = 1; //orange
@@ -39,7 +44,7 @@ double temperature, temperatureRead, temperature2;
 char colorString[1];
 char intensityString[2];
 char string[11];
-int intensity;
+int intensity, co2;
 
 void wait(){
 	for(waitInt = 0; waitInt < 20000; waitInt++){}
@@ -316,9 +321,52 @@ void runWithServerProtocol(){
 	}
 }
 
+int readCo2(){
+	i2c_startw_tx();
+	//i2c_wr_wait(CO2_WR_ADDRESS);
+	i2c_write_char(CO2_WR_ADDRESS);
+	i2c_write_char(CO2_FUNCTION_CODE);
+	i2c_write_char(0x13);
+	i2c_write_char(0x8B);
+	i2c_write_char(0);
+	i2c_write_char(1);
+
+	i2c_start_tx();
+	//i2c_wr_wait(CO2_RD_ADDRESS);
+	i2c_write_char(CO2_RD_ADDRESS);
+	i2c_read_char(&co2Data0);
+	i2c_send_ack();
+	i2c_read_char(&co2Data1);
+	i2c_send_ack();
+	i2c_read_char(&co2Data2);
+	i2c_send_ack();
+	i2c_read_char(&co2Data3);
+	i2c_send_nak();
+	i2c_stop_tx();
+	printf("%d, %d, %d, %d\n", co2Data0, co2Data1, co2Data2, co2Data3);
+	return 256 * (int) co2Data2 + (int) co2Data3;
+}
+
 void main(){
 	initialize();
 	while(1){
 		//runWithServerProtocol();
+		co2 = readCo2();
+		printf("%d\n", co2);
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
+		wait();
 	}
 }
