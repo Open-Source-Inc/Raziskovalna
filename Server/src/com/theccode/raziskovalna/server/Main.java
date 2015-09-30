@@ -7,7 +7,7 @@ public class Main {
         Server server = new Server(1234);
         server.start();
 
-        SQL sql = new SQL("192.168.1.63", "user", "pass");
+        SQL sql = new SQL("192.168.1.63", "raziskovalna", "Raziskovalna123");
 
         DecimalFormat df = new DecimalFormat("#.#");
         while (true) {
