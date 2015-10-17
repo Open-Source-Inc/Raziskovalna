@@ -38,7 +38,7 @@ int digitColors[11];
 
 char data, temp, countPerC, countRemain;
 char output[2048];
-int i, j, address, color, waitInt, waitCount, roundI, roundJ;
+int i, j, address, color, waitInt, waitCount, roundI, roundJ, gas2;
 unsigned char readArray[2];
 double temperature, temperatureRead, temperature2, temperatureResult;
 char colorString[1];
@@ -332,9 +332,14 @@ void runWithServerProtocol(){
 					sock_puts(&socket, output);
 					printf("temperature: %s\n", output);
 
-				}else if(buffer[0] == "g"){
-					sock_puts(&socket, "0");
+				}else if(buffer[0] == (char) 103){
+					printf("gas pending\n");
+					co2 = readCo2();
+					sprintf(output, "%d", co2);
+					sock_puts(&socket, output);
+					printf("gas: %s\n", output);
 				}else{
+					//printf("fitst char: '%d'\n", (char) buffer[0]);
 					colorString[0] = buffer[0];
 					intensityString[0] = buffer[1];
 					intensityString[1] = buffer[2];
@@ -365,9 +370,9 @@ void runWithServerProtocol(){
 void main(){
 	initialize();
 	while(1){
-		//runWithServerProtocol();
+		runWithServerProtocol();
 		
-		co2 = readCo2();
+		/*co2 = readCo2();
 		printf("co2: %d\n", co2);
 		snprintf(toWriteString, sizeof(toWriteString), "%d ppm", co2);
 		renderString(toWriteString, 0);
@@ -377,6 +382,6 @@ void main(){
 		printf("temp: %f\n", temperature2);
 		snprintf(toWriteString, sizeof(toWriteString), "%.1f °C", temperature2);
 		renderString(toWriteString, 2);
-		waitx(50);
+		waitx(50);*/
 	}
 }
