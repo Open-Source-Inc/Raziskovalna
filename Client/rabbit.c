@@ -296,6 +296,7 @@ void runWithServerProtocol(){
 	if( 0L == (ip = resolve(SERVER)) ) {
 		renderString("DNS error", 2);
 		printf("DNS error\n");
+		return;
 	}else{
 		renderString("Resolved", 0);
 		printf("Resolved\n");
@@ -339,25 +340,29 @@ void runWithServerProtocol(){
 					sock_puts(&socket, output);
 					printf("gas: %s\n", output);
 				}else{
-					//printf("fitst char: '%d'\n", (char) buffer[0]);
 					colorString[0] = buffer[0];
-					intensityString[0] = buffer[1];
-					intensityString[1] = buffer[2];
+					//intensityString[0] = buffer[1];
+					//intensityString[1] = buffer[2];
 
 					color = atoi(colorString);
-					intensity = atoi(intensityString);
 
-					for(i = 3;  i < strlen(buffer); i++){
-						if(i-3 < 11){
-							string[i-3] = buffer[i];
+					//clear
+					for(i=0; i < 11; i++){
+						string[i] = 32;
+					}
+
+					for(i = 1;  i < strlen(buffer); i++){
+						if(i < 11){
+							string[i-1] = buffer[i];
 						}
 					}
 
-					for(; i < 14; i++){
-						string[i - 3] = " "[0];
-					}
+					//fill all remaining chars with space
+					/*for(; i < strlen(string); i++){
+						string[i] = " "[0];
+					}*/
 
-					setIntensity(intensity);
+					//setIntensity(intensity);
 					renderString(string, color);
 					sock_puts(&socket, "1");
 				}
