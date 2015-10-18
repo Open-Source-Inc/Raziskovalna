@@ -296,6 +296,7 @@ void runWithServerProtocol(){
 	if( 0L == (ip = resolve(SERVER)) ) {
 		renderString("DNS error", 2);
 		printf("DNS error\n");
+		waitx(10);
 		return;
 	}else{
 		renderString("Resolved", 0);
