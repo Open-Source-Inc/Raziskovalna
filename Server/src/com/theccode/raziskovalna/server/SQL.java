@@ -10,7 +10,7 @@ public class SQL {
     private String url, user, password;
 
     public SQL(String ip, String user, String password) {
-        url = "jdbc:mysql://" + ip + ":3306/raziskovalna";
+        url = "jdbc:mysql://" + ip + ":3306/co2";
         this.user = user;
         this.password = password;
     }

@@ -7,4 +7,4 @@
 *.org
 *.rom
 
-Server/MySQL Connector.jar
+Server/lib/MySQL Connector.jar
