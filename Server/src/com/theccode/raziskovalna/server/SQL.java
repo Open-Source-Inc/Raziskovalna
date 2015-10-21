@@ -18,7 +18,7 @@ public class SQL {
             Connection connection = DriverManager.getConnection(url, user, password);
             Statement statement = connection.createStatement();
 
-            String query = "insert into data(id, gas, temperature) values('" + id + "', " + gas + ", " + temperature + ")";
+            String query = "insert into data (id, gas, temperature) values('" + id + "', " + gas + ", " + temperature + ");";
             statement.executeUpdate(query);
 
             statement.close();
