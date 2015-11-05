@@ -23,12 +23,12 @@ public class Main {
 			final long TIMEOUT = 10000;
 
 			String id = in.readLine();
-			
+
 			boolean displayTemp = true;
-			
+
 			// Temperature: 18-21, step 3
 			// Gas: <600, 600-1000, >1000
-			
+
 			while (true) {
 				String gas = "";
 				String temperature = "";
@@ -63,7 +63,7 @@ public class Main {
 
 				temperature = decimalFormat.format(Float.parseFloat(temperature));
 				sql.write(id, gas, temperature);
-				
+
 				if (displayTemp) {
 					float tempNumber = Float.parseFloat(temperature);
 					String color = "";
@@ -72,7 +72,7 @@ public class Main {
 					else if (tempNumber < 18 && tempNumber >= 15 || tempNumber > 21 && tempNumber <= 24)
 						color = "1";
 					else color = "2";
-					
+
 					out.println(color + temperature + " &C");
 					time = System.currentTimeMillis();
 					while (true) {
@@ -85,17 +85,17 @@ public class Main {
 							System.exit(0);
 						}
 					}
-					
+
 					displayTemp = false;
 				} else {
 					float gasNumber = Float.parseFloat(gas);
 					String color = "";
-					if (gasNumber <= 600) 
+					if (gasNumber <= 600)
 						color = "0";
 					else if (gasNumber <= 1000)
 						color = "1";
 					else color = "2";
-					
+
 					out.println(color + gas + " ppm");
 					time = System.currentTimeMillis();
 					while (true) {
@@ -108,7 +108,7 @@ public class Main {
 							System.exit(0);
 						}
 					}
-					
+
 					displayTemp = true;
 				}
 
