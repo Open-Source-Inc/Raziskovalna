@@ -6,7 +6,7 @@
 #define TCPCONFIG 3
 
 //server and port
-#define SERVER "theccode.com"
+#define SERVER "co2.partycon.net"
 #define PORT 80
 
 //#use "net.lib"
