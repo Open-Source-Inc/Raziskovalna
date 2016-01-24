@@ -12,3 +12,5 @@ Notes
 - Server side uses mysql database to work. Its empyt backup lies somewhere in `Server` folder.
 - Client side can only be modified/compiled/edited on windows (Wine and other patches won't work).
 - Server side probably cannot be developed/compiled/run on Windows. However, congratulations if you manage to do it.
+
+More detailed (Slovenian) discription provided <a href="https://docs.google.com/document/d/10DHLNeD8tyJaak70AY6y7xMuB0N7Gs9KO1u1_FFPgIU/edit?usp=sharing">here</a>.
